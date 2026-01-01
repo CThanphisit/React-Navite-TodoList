@@ -9,14 +9,15 @@ export const RootStack = createNativeStackNavigator<RootStackParamList>({
     TodoList: {
       screen: TodoListScreen,
       options: {
-        title: "Todo List",
+        // title: "Todo List",
+        headerShown: false,
       },
     },
     AddTodo: {
       screen: AddTodoScreen,
-      options: {
-        title: "Add Todo",
-      },
+      // options: {
+      //   title: "Add Todo",
+      // },
     },
   },
 });

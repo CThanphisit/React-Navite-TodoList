@@ -4,16 +4,16 @@ import {
   Button,
   FlatList,
   KeyboardAvoidingView,
+  TextInput,
+  StyleSheet,
+  Pressable,
+  TouchableOpacity,
 } from "react-native";
-import { RouteProp, useNavigation } from "@react-navigation/native";
-import { RootStackParamList } from "../navigation/types";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useState } from "react";
 import TodoItem from "../components/TodoItem";
-import { useRoute } from "@react-navigation/native";
 
-type NavigationProp = NativeStackNavigationProp<RootStackParamList, "TodoList">;
-type TodoListRouteProp = RouteProp<RootStackParamList, "TodoList">;
+import { mainStyles } from "./styles";
+import { AntDesign } from "@expo/vector-icons";
 
 type dataProps = {
   id: string;
@@ -22,16 +22,16 @@ type dataProps = {
 };
 
 export default function TodoListScreen() {
-  const navigation = useNavigation<NavigationProp>();
-  const route = useRoute<TodoListRouteProp>();
-
   const [todos, setTodos] = useState<dataProps[]>([]);
+  console.log("todos", todos);
+  const [title, setTitle] = useState("");
 
   const addTodo = (title: string) => {
     setTodos((prev) => [
       ...prev,
       { id: Date.now().toString(), title, completed: false },
     ]);
+    setTitle("");
   };
 
   const checkCompleted = (id: string) => {
@@ -42,21 +42,47 @@ export default function TodoListScreen() {
     );
   };
 
+  const removeTodo = (id: string) => {
+    setTodos((prev) => prev.filter((todo) => todo.id !== id));
+  };
+
   return (
-    <KeyboardAvoidingView style={{ flex: 1 }}>
-      <View style={{ flex: 1, marginVertical: 20 }}>
+    <KeyboardAvoidingView style={mainStyles.container}>
+      <View style={{ marginVertical: 20 }}>
+        <Text style={mainStyles.todoText}>
+          You have {todos.length} tasks remaining
+        </Text>
+      </View>
+
+      <View>
         <FlatList
           data={todos}
           renderItem={({ item }) => (
-            <TodoItem todo={item} checkCompleted={checkCompleted} />
+            <TodoItem
+              todo={item}
+              checkCompleted={checkCompleted}
+              removeTodo={removeTodo}
+            />
           )}
           keyExtractor={(item) => item.id}
-          ListEmptyComponent={() => <Text>No Data</Text>}
+          // ListEmptyComponent={() => <Text>No Data</Text>}
         />
-        <Button
-          title="Add Todo"
-          onPress={() => navigation.navigate("AddTodo", { onAdd: addTodo })}
+      </View>
+
+      <View style={mainStyles.inputWrapper}>
+        <TextInput
+          style={mainStyles.input}
+          placeholder="Add new task"
+          placeholderTextColor="#A0A0A0"
+          value={title}
+          onChangeText={setTitle}
         />
+        <TouchableOpacity
+          style={mainStyles.buttonSmall}
+          onPress={() => addTodo(title)}
+        >
+          <AntDesign name="arrow-right" size={24} color="#fff" fontSize={20} />
+        </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
   );
