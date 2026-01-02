@@ -9,22 +9,36 @@ import {
   Pressable,
   TouchableOpacity,
 } from "react-native";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import TodoItem from "../components/TodoItem";
 
 import { mainStyles } from "./styles";
 import { AntDesign } from "@expo/vector-icons";
+import { loadTodos, saveTodos } from "../storage/todoStorage";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-type dataProps = {
+export type TodoType = {
   id: string;
   title: string;
   completed: boolean;
 };
 
 export default function TodoListScreen() {
-  const [todos, setTodos] = useState<dataProps[]>([]);
-  console.log("todos", todos);
+  const [todos, setTodos] = useState<TodoType[]>([]);
   const [title, setTitle] = useState("");
+
+  useEffect(() => {
+    const fetchTodos = async () => {
+      const todosData = await loadTodos();
+      setTodos(todosData);
+    };
+
+    fetchTodos();
+  }, []);
+
+  useEffect(() => {
+    saveTodos(todos);
+  }, [todos]);
 
   const addTodo = (title: string) => {
     setTodos((prev) => [

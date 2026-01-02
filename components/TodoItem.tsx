@@ -10,6 +10,7 @@ export default function TodoItem({ todo, checkCompleted, removeTodo }: any) {
         <BouncyCheckbox
           size={25}
           fillColor="#03DAC6"
+          isChecked={todo.completed}
           innerIconStyle={{ borderWidth: 2 }}
           onPress={(isChecked: boolean) => {
             checkCompleted(todo.id);
